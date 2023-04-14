@@ -33,9 +33,9 @@ public class PlayerMove : MonoBehaviour
         if(Input.GetButtonUp("Horizontal"))
             rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
 
-        // 방향 전환
-        if (Input.GetButtonDown("Horizontal"))  // 방향키를 입력할 때
-            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;    // 왼쪽 방향키 입력시 방향을 전환한다.
+        // 방향 전환(왼쪽 방향키를 누르면 뒤집고 오른쪽 방향키를 누르면 원상태로 복귀)
+        if (Input.GetButtonDown("Horizontal"))  
+            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;    
 
         // 이동 애니메이션 처리
         if (Mathf.Abs(rigid.velocity.x) < 0.3)   // 멈췄으면
@@ -47,8 +47,8 @@ public class PlayerMove : MonoBehaviour
     void FixedUpdate()
     {
         // 속도 증가
-        float h = Input.GetAxisRaw("Horizontal");
-        rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse);
+        float h = Input.GetAxisRaw("Horizontal"); // (-1, 0, 1) 방향을 받아온다.
+        rigid.AddForce(Vector2.right * h, ForceMode2D.Impulse); // 해당 방향으로 업데이트 할 때 마다 이동한다.
 
         // 최대속도 지정
         if (rigid.velocity.x > maxSpeed)    
@@ -63,9 +63,9 @@ public class PlayerMove : MonoBehaviour
         
         // RaycastHit : Ray에 닿은 오브젝트
         // RaycastHit변수의 콜라이더로 닿은 오브젝트 확인 가능
-        // RaycastHit는 관통이 안된다. 즉 콜라이더를 한 번 맞으면 끝임.
+        // RaycastHit은 관통이 안된다. 즉 콜라이더를 한 번 맞으면 끝임(플레이어에도 콜라이더가 있어서 문제가 됨).
 
-        if(rigid.velocity.y < 0)    // 속도가 마이너스 일 때 오브젝트를 Ray를 쏜다.
+        if(rigid.velocity.y < 0)    // 속도가 마이너스 일 때 Ray를 쏜다.
         {
             Debug.DrawRay(rigid.position, Vector3.down, new Color(1, 0, 0));
 
