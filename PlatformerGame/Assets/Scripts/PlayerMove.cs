@@ -4,17 +4,20 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    public GameManager gameManager;
     public float maxSpeed;
     public float jumpPower;
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
+    CapsuleCollider2D capsuleCollider;
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
     }
 
     // 단발적인 키 입력일 때 Update사용
@@ -34,11 +37,11 @@ public class PlayerMove : MonoBehaviour
             rigid.velocity = new Vector2(rigid.velocity.normalized.x * 0.5f, rigid.velocity.y);
 
         // 방향 전환(왼쪽 방향키를 누르면 뒤집고 오른쪽 방향키를 누르면 원상태로 복귀)
-        if (Input.GetButtonDown("Horizontal"))  
+        if (Input.GetButton("Horizontal"))  
             spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") == -1;    
 
         // 이동 애니메이션 처리
-        if (Mathf.Abs(rigid.velocity.x) < 0.3)   // 멈췄으면
+        if (Mathf.Abs(rigid.velocity.x) < 0.3f)   // 멈췄으면
             anim.SetBool("isWalking", false);   // 정지상태로 전환한다.
         else // 이동 중이면
             anim.SetBool("isWalking", true);    // 걷기상태로 전환한다.
@@ -81,5 +84,114 @@ public class PlayerMove : MonoBehaviour
                     anim.SetBool("isJumping", false);   // 점프를 헤제한다.
             }
         }
+    }
+    
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Enemy") // 적과 충돌할 때
+        {
+            // 적 위에 있을 때
+            if(rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
+            {
+                OnAttack(collision.transform);
+            }
+            else
+                OnDamaged(collision.transform.position);
+        }
+        else if(collision.gameObject.tag == "Spike")
+        {
+            OnDamaged(collision.transform.position);
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "Item")
+        {
+            // 점수
+            bool isBronze = collision.gameObject.name.Contains("Bronze");
+            bool isSilver = collision.gameObject.name.Contains("Silver");
+            bool isGold = collision.gameObject.name.Contains("Gold");
+
+            if (isBronze)
+                gameManager.stagePoint += 50;
+            else if (isSilver)
+                gameManager.stagePoint += 100;
+            else if (isGold)
+                gameManager.stagePoint += 300;
+
+
+            // 아이템 비활성화
+            collision.gameObject.SetActive(false);
+
+        }
+        else if(collision.gameObject.tag == "Finish")
+        {
+            // 다음 스테이지
+            gameManager.NextStage();
+        }
+    }
+
+    void OnAttack(Transform enemy)
+    {
+        // 점수
+        gameManager.stagePoint += 100;
+
+        // 적 밟을 시 반발력 적용
+        rigid.AddForce(Vector2.up * 10, ForceMode2D.Impulse);
+
+        // 적 사망
+        EnemyMove enemyMove = enemy.GetComponent<EnemyMove>();
+        enemyMove.OnDamaged();
+    }
+
+    // 플레이어가 데미지를 입었을 때 처리
+    void OnDamaged(Vector2 targetPos)
+    {
+        // 체력 깎기
+        gameManager.HealthDown();
+
+        // 레이어 변경(무적모드 설정)
+        gameObject.layer = 11;
+
+        // 투명도 설정
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        // 반대 방향으로 튕긴다.
+        int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
+        rigid.AddForce(new Vector2(dirc, 1)*7, ForceMode2D.Impulse);
+
+        // 애니메이션
+        anim.SetTrigger("doDamaged");
+
+        // 무적설정
+        Invoke(nameof(OffDamaged), 3);
+    }
+
+    // 무적모드 해제
+    void OffDamaged()
+    {
+        gameObject.layer = 10;
+        spriteRenderer.color = new Color(1, 1, 1, 1);
+    }
+
+    public void OnDie()
+    {
+        // 투명도 지정
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+
+        // y축 뒤집기
+        spriteRenderer.flipY = true;
+
+        // 콜라이더 지정
+        capsuleCollider.enabled = false;
+
+        // 점프
+        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+    }
+
+    public void VelocityZero()
+    {
+        rigid.velocity = Vector2.zero;
     }
 }
