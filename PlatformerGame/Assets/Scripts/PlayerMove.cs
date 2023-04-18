@@ -4,13 +4,23 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+
     public GameManager gameManager;
+    public AudioClip audioJump;
+    public AudioClip audioAttack;
+    public AudioClip audioDamaged;
+    public AudioClip audioItem;
+    public AudioClip audioDie;
+    public AudioClip audioFinish;
     public float maxSpeed;
     public float jumpPower;
+
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
     CapsuleCollider2D capsuleCollider;
+    AudioSource audioSource;
+
 
     void Awake()
     {
@@ -18,7 +28,10 @@ public class PlayerMove : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
+        audioSource = GetComponent<AudioSource>();
     }
+
+    
 
     // 단발적인 키 입력일 때 Update사용
     // 지속적인 키 입력일 때 FixedUpdate사용(이때 단발적인 키 입력 발생 시 씹히는 현상이 발생할 수 있음) 초당 프레임이 더 낮기 때문
@@ -30,6 +43,8 @@ public class PlayerMove : MonoBehaviour
         {
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse); // 점프한다.
             anim.SetBool("isJumping", true);
+
+            PlaySound("JUMP");
         }
 
         // 방향키에서 손을 뗄 시 속도를 줄인다.
@@ -94,6 +109,8 @@ public class PlayerMove : MonoBehaviour
             if(rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
             {
                 OnAttack(collision.transform);
+
+                PlaySound("ATTACK");
             }
             else
                 OnDamaged(collision.transform.position);
@@ -124,11 +141,14 @@ public class PlayerMove : MonoBehaviour
             // 아이템 비활성화
             collision.gameObject.SetActive(false);
 
+            PlaySound("ITEM");
         }
         else if(collision.gameObject.tag == "Finish")
         {
             // 다음 스테이지
             gameManager.NextStage();
+
+            PlaySound("FINISH");
         }
     }
 
@@ -166,6 +186,8 @@ public class PlayerMove : MonoBehaviour
 
         // 무적설정
         Invoke(nameof(OffDamaged), 3);
+
+        PlaySound("DAMAGED");
     }
 
     // 무적모드 해제
@@ -188,10 +210,37 @@ public class PlayerMove : MonoBehaviour
 
         // 점프
         rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+
+        PlaySound("DIE");
     }
 
     public void VelocityZero()
     {
         rigid.velocity = Vector2.zero;
+    }
+
+    void PlaySound(string action)
+    {
+        switch (action)
+        {
+            case "JUMP":
+                audioSource.clip = audioJump;
+                break;
+            case "ATTACK":
+                audioSource.clip = audioAttack;
+                break;
+            case "DAMAGED":
+                audioSource.clip = audioDamaged;
+                break;
+            case "ITEM":
+                audioSource.clip = audioItem;
+                break;
+            case "DIE":
+                audioSource.clip = audioDie;
+                break;
+            case "FINISH":
+                audioSource.clip = audioFinish;
+                break;
+        }
     }
 }

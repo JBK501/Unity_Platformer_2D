@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +13,16 @@ public class GameManager : MonoBehaviour
     public PlayerMove player;
     public GameObject[] stages;
 
+    public Image[] UIhealth;
+    public Text UIPoint;
+    public Text UIStage;
+    public GameObject UIRestartBtn;
+
+    void Update()
+    {
+        UIPoint.text = (totalPoint + stagePoint).ToString();
+    }
+
     public void NextStage()
     {
         // 스테이지를 변경한다.
@@ -20,12 +32,21 @@ public class GameManager : MonoBehaviour
             stageIndex++;
             stages[stageIndex].SetActive(true);
             PlayerReposition();
+
+            UIStage.text = "STAGE " + (stageIndex + 1);
         }
-        else
+        else // 게임 클리어 시
         {
+            // Player Control Rock
             Time.timeScale = 0;
 
+            // 결과 표시
             Debug.Log("게임 클리어.");
+
+            // 재시작 버튼
+            Text btnText = UIRestartBtn.GetComponentInChildren<Text>();
+            btnText.text = "Clear!";
+            UIRestartBtn.SetActive(true);
         }
         
         // 점수를 계산한다.
@@ -36,9 +57,15 @@ public class GameManager : MonoBehaviour
     public void HealthDown()
     {
         if (health > 1)
+        {
             health--;
+            UIhealth[health].color = new Color(1, 1, 1, 0.2f);
+        }
         else
         {
+            // 모든 체력 UI OFF처리
+            UIhealth[0].color = new Color(1, 0, 0, 0.4f);
+
             // 플레이어 사망 처리
             player.OnDie();
 
@@ -46,6 +73,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("죽었습니다.");
 
             // 재도전 버튼 UI표시
+            UIRestartBtn.SetActive(true);
         }
     }
 
@@ -66,7 +94,19 @@ public class GameManager : MonoBehaviour
 
     void PlayerReposition()
     {
-        player.transform.position = new Vector3(0, 0, -1);
+        if(stageIndex == 0)
+        {
+            player.transform.position = new Vector3(-3, 2, -1);
+        }
+        else
+            player.transform.position = new Vector3(0, 0, -1);
+
         player.VelocityZero();
+    }
+
+    public void Restart()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(0);
     }
 }
