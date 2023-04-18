@@ -3544,7 +3544,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 418804456}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.23, y: 3.96, z: 0}
+  m_LocalPosition: {x: -8.48, y: 2.91, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 519420032}
@@ -4204,7 +4204,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 683321275}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 22.08, y: 0.98, z: 1.5888388}
+  m_LocalPosition: {x: 22.4, y: 1.42, z: 1.5888388}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1953476676}
@@ -4720,7 +4720,10 @@ MonoBehaviour:
   - {fileID: 837812794}
   - {fileID: 1953476675}
   - {fileID: 1162051400}
-  UIHealth: []
+  UIHealth:
+  - {fileID: 1638307350}
+  - {fileID: 2018046998}
+  - {fileID: 53725368}
   UIPoint: {fileID: 1304094753}
   UIStage: {fileID: 338565804}
   UIRestartBtn: {fileID: 1936993378}

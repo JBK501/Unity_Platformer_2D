@@ -96,11 +96,11 @@ public class GameManager : MonoBehaviour
     void PlayerReposition()
     {
         if(stageIndex == 0)
-        {
-            player.transform.position = new Vector3(-3, 2, -1);
-        }
-        else
-            player.transform.position = new Vector3(0, 0, -1);
+            player.transform.position = new Vector3(-8.48f, 2.91f, -1f);
+        else if(stageIndex == 1)
+            player.transform.position = new Vector3(-6.63f, 2.43f, -1f);
+        else if(stageIndex == 2)    
+            player.transform.position = new Vector3(-10.5f, 3.5f, 1f);
 
         player.VelocityZero();
     }
