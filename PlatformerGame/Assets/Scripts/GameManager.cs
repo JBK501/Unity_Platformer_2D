@@ -10,10 +10,11 @@ public class GameManager : MonoBehaviour
     public int stagePoint;
     public int stageIndex;
     public int health;
+   
     public PlayerMove player;
     public GameObject[] stages;
 
-    public Image[] UIhealth;
+    public Image[] UIHealth;
     public Text UIPoint;
     public Text UIStage;
     public GameObject UIRestartBtn;
@@ -59,17 +60,17 @@ public class GameManager : MonoBehaviour
         if (health > 1)
         {
             health--;
-            UIhealth[health].color = new Color(1, 1, 1, 0.2f);
+            UIHealth[health].color = new Color(1, 1, 1, 0.2f);
         }
         else
         {
             // 모든 체력 UI OFF처리
-            UIhealth[0].color = new Color(1, 0, 0, 0.4f);
+            UIHealth[0].color = new Color(1, 1, 1, 0.4f);
 
             // 플레이어 사망 처리
             player.OnDie();
 
-            // 결과 UI표시
+            // 결과 표시
             Debug.Log("죽었습니다.");
 
             // 재도전 버튼 UI표시
@@ -104,7 +105,8 @@ public class GameManager : MonoBehaviour
         player.VelocityZero();
     }
 
-    public void Restart()
+    // 버튼이 클릭될 때 호출함.
+    public void Restart()   
     {
         Time.timeScale = 1;
         SceneManager.LoadScene(0);

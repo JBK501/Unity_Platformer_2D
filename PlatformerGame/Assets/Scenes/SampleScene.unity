@@ -4540,7 +4540,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &837812795
 Transform:
   m_ObjectHideFlags: 0
@@ -4720,10 +4720,7 @@ MonoBehaviour:
   - {fileID: 837812794}
   - {fileID: 1953476675}
   - {fileID: 1162051400}
-  UIhealth:
-  - {fileID: 1638307350}
-  - {fileID: 2018046998}
-  - {fileID: 53725368}
+  UIHealth: []
   UIPoint: {fileID: 1304094753}
   UIStage: {fileID: 338565804}
   UIRestartBtn: {fileID: 1936993378}
@@ -4754,7 +4751,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -5}
+  m_Offset: {x: 0, y: -6}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -5995,7 +5992,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1162051401
 Transform:
   m_ObjectHideFlags: 0

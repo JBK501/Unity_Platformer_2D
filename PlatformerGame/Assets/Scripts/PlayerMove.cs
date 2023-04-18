@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-
     public GameManager gameManager;
     public AudioClip audioJump;
     public AudioClip audioAttack;
@@ -109,8 +108,6 @@ public class PlayerMove : MonoBehaviour
             if(rigid.velocity.y < 0 && transform.position.y > collision.transform.position.y)
             {
                 OnAttack(collision.transform);
-
-                PlaySound("ATTACK");
             }
             else
                 OnDamaged(collision.transform.position);
@@ -160,6 +157,9 @@ public class PlayerMove : MonoBehaviour
         // 적 밟을 시 반발력 적용
         rigid.AddForce(Vector2.up * 10, ForceMode2D.Impulse);
 
+        // 사운드
+        PlaySound("ATTACK");
+
         // 적 사망
         EnemyMove enemyMove = enemy.GetComponent<EnemyMove>();
         enemyMove.OnDamaged();
@@ -171,23 +171,24 @@ public class PlayerMove : MonoBehaviour
         // 체력 깎기
         gameManager.HealthDown();
 
-        // 레이어 변경(무적모드 설정)
-        gameObject.layer = 11;
+        // 반대 방향으로 튕긴다.
+        int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
+        rigid.AddForce(new Vector2(dirc, 1) * 7, ForceMode2D.Impulse);
 
         // 투명도 설정
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
 
-        // 반대 방향으로 튕긴다.
-        int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
-        rigid.AddForce(new Vector2(dirc, 1)*7, ForceMode2D.Impulse);
+        // 레이어 변경(무적모드 설정)
+        gameObject.layer = 11;
 
         // 애니메이션
-        anim.SetTrigger("doDamaged");
-
-        // 무적설정
-        Invoke(nameof(OffDamaged), 3);
-
+        anim.SetTrigger("doDamaged"); 
+        
+        // 사운드
         PlaySound("DAMAGED");
+
+        // 3초후 무적모드 해제
+        Invoke(nameof(OffDamaged), 3);
     }
 
     // 무적모드 해제
@@ -209,7 +210,7 @@ public class PlayerMove : MonoBehaviour
         capsuleCollider.enabled = false;
 
         // 점프
-        rigid.AddForce(Vector2.up * 5, ForceMode2D.Impulse);
+        rigid.AddForce(Vector2.up * 5f, ForceMode2D.Impulse);
 
         PlaySound("DIE");
     }
@@ -242,5 +243,7 @@ public class PlayerMove : MonoBehaviour
                 audioSource.clip = audioFinish;
                 break;
         }
+
+        audioSource.Play();
     }
 }

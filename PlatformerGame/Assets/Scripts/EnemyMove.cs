@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class EnemyMove : MonoBehaviour
 {
+    public int nextMove; // 행동지표를 결정할 변수
+
     Rigidbody2D rigid;
     SpriteRenderer spriteRenderer;
     Animator anim;
     CapsuleCollider2D capsuleCollider;
 
-    public int nextMove; // 행동지표를 결정할 변수
-
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();   
         spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();   
         capsuleCollider = GetComponent<CapsuleCollider2D>();    
 
         // Invoke() : 주어진 시간이 지난 뒤, 지정된 함수를 실행한다.
@@ -39,7 +39,7 @@ public class EnemyMove : MonoBehaviour
 
         if(rayHit.collider == null) // 다음 지형이 없다면
         {
-            Turn();
+            Turn(); // 회전한다.
         }
     }
 
